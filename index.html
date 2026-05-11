@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoboLab — Build Real Robots. Ages 13–17.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0a0a0a;
+  --white:#ffffff;
+  --gray-50:#f9f9f8;
+  --gray-100:#f0efec;
+  --gray-200:#e4e2dc;
+  --gray-400:#a8a49c;
+  --gray-600:#6b6760;
+  --gray-800:#2c2b28;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Geist',system-ui,sans-serif;
+  --border:1px solid var(--gray-200);
+  --radius:10px;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--white);color:var(--black);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:var(--border);padding:0 2rem;height:58px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:var(--serif);font-size:1.35rem;letter-spacing:-0.01em;color:var(--black);text-decoration:none}
+.nav-pill{display:flex;background:var(--gray-100);border-radius:100px;padding:4px;gap:2px}
+.nav-pill a{padding:6px 18px;border-radius:100px;font-size:0.8125rem;font-weight:500;color:var(--gray-600);text-decoration:none;transition:all 0.15s}
+.nav-pill a.active,.nav-pill a:hover{background:var(--white);color:var(--black);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.nav-right{display:flex;align-items:center;gap:1rem}
+.nav-right a{font-size:0.875rem;color:var(--gray-600);text-decoration:none}
+.btn-primary{background:var(--black);color:var(--white);padding:8px 20px;border-radius:100px;font-size:0.875rem;font-weight:500;text-decoration:none;border:none;cursor:pointer;font-family:var(--sans);transition:opacity 0.15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary:hover{opacity:0.85}
+.btn-outline{background:transparent;color:var(--black);padding:8px 20px;border-radius:100px;font-size:0.875rem;font-weight:500;text-decoration:none;border:var(--border);cursor:pointer;font-family:var(--sans);transition:all 0.15s;display:inline-flex;align-items:center;gap:6px}
+.btn-outline:hover{background:var(--gray-100)}
+
+/* HERO */
+.hero{padding:7rem 2rem 5rem;max-width:1100px;margin:0 auto;text-align:center;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;border:var(--border);border-radius:100px;padding:5px 16px;font-size:0.75rem;font-weight:500;color:var(--gray-600);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:2.5rem}
+.hero-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--black);display:inline-block}
+.hero h1{font-family:var(--serif);font-size:clamp(3.5rem,8vw,7rem);line-height:1.0;letter-spacing:-0.025em;font-weight:400;margin-bottom:0.25em}
+.hero h1 em{font-style:italic;color:var(--gray-400)}
+.hero-sub{font-size:1.125rem;color:var(--gray-600);max-width:520px;margin:1.75rem auto 2.5rem;line-height:1.7}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* STATS STRIP */
+.stats-strip{border-top:var(--border);border-bottom:var(--border);background:var(--gray-50)}
+.stats-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.stat-cell{padding:1.75rem 2rem;border-right:var(--border)}
+.stat-cell:last-child{border-right:none}
+.stat-num{font-family:var(--serif);font-size:2.5rem;letter-spacing:-0.03em;line-height:1;display:block}
+.stat-label{font-size:0.6875rem;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;display:block}
+
+/* SECTION WRAPPER */
+.section{max-width:1100px;margin:0 auto;padding:5rem 2rem}
+.section-eyebrow{font-size:0.6875rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-600);margin-bottom:1rem}
+.section-heading{font-family:var(--serif);font-size:clamp(2rem,4vw,3.25rem);line-height:1.1;letter-spacing:-0.02em;font-weight:400;margin-bottom:1rem}
+.section-heading em{font-style:italic;color:var(--gray-400)}
+.section-sub{font-size:1rem;color:var(--gray-600);max-width:480px;line-height:1.7}
+
+/* DIVIDER */
+.divider{border:none;border-top:var(--border);margin:0}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:3rem;border:var(--border);border-radius:var(--radius);overflow:hidden}
+.step{padding:2rem 1.75rem;border-right:var(--border);position:relative}
+.step:last-child{border-right:none}
+.step-num{font-family:var(--serif);font-size:3rem;color:var(--gray-200);line-height:1;margin-bottom:1.25rem;display:block}
+.step-title{font-size:1rem;font-weight:600;margin-bottom:0.6rem}
+.step-desc{font-size:0.875rem;color:var(--gray-600);line-height:1.65}
+
+/* AGE GROUPS */
+.age-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--gray-200);border:var(--border);border-radius:var(--radius);overflow:hidden;margin-top:3rem}
+.age-card{background:var(--white);padding:2rem 1.75rem;display:flex;flex-direction:column;gap:1.25rem;transition:background 0.15s}
+.age-card:hover{background:var(--gray-50)}
+.age-tag{display:inline-block;font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-600);border:var(--border);border-radius:100px;padding:3px 12px;width:fit-content}
+.age-title{font-family:var(--serif);font-size:1.75rem;letter-spacing:-0.02em;line-height:1.15}
+.age-goal-label{font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gray-600);font-weight:600;margin-bottom:4px}
+.age-goal{font-size:0.875rem;color:var(--gray-800);line-height:1.6}
+.age-skills{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.skill-pill{font-size:0.6875rem;padding:4px 11px;border-radius:100px;border:var(--border);color:var(--gray-600);white-space:nowrap}
+.age-cta{margin-top:0.5rem}
+
+/* PROJECTS */
+.projects-header{display:grid;grid-template-columns:1fr auto;align-items:end;margin-bottom:3rem}
+.projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.project-card{border:var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color 0.15s}
+.project-card:hover{border-color:var(--gray-400)}
+.project-visual{height:140px;display:flex;align-items:center;justify-content:center;background:var(--gray-50);border-bottom:var(--border);position:relative;overflow:hidden}
+.project-visual svg{opacity:0.85}
+.project-body{padding:1.25rem 1.25rem 1.5rem}
+.project-phase{font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gray-600);font-weight:600;margin-bottom:6px}
+.project-name{font-size:1rem;font-weight:600;margin-bottom:6px;line-height:1.3}
+.project-desc{font-size:0.8125rem;color:var(--gray-600);line-height:1.6}
+
+/* MICROMOUSE SPOTLIGHT */
+.spotlight{background:var(--black);color:var(--white);margin:0;padding:5rem 2rem}
+.spotlight-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.spotlight .section-eyebrow{color:rgba(255,255,255,0.45)}
+.spotlight .section-heading{color:var(--white)}
+.spotlight .section-heading em{color:rgba(255,255,255,0.4)}
+.spotlight .section-sub{color:rgba(255,255,255,0.6)}
+.mouse-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);overflow:hidden;margin-top:2rem}
+.mouse-stat{background:rgba(255,255,255,0.04);padding:1.25rem 1.5rem}
+.mouse-stat-val{font-family:var(--serif);font-size:1.75rem;color:var(--white);display:block;letter-spacing:-0.02em}
+.mouse-stat-lbl{font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.45);margin-top:3px;display:block}
+.maze-container{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius);padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1rem}
+.maze-caption{font-size:0.75rem;color:rgba(255,255,255,0.4);text-align:center;letter-spacing:0.04em;text-transform:uppercase}
+
+/* TIMELINE */
+.timeline{margin-top:3rem;display:flex;flex-direction:column;gap:0;border:var(--border);border-radius:var(--radius);overflow:hidden}
+.timeline-row{display:grid;grid-template-columns:100px 1fr;border-bottom:var(--border)}
+.timeline-row:last-child{border-bottom:none}
+.timeline-week{padding:1.5rem 1.5rem;background:var(--gray-50);border-right:var(--border);display:flex;align-items:flex-start}
+.timeline-week span{font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gray-600);font-weight:600;white-space:nowrap}
+.timeline-content{padding:1.5rem 1.75rem}
+.timeline-title{font-weight:600;font-size:0.9375rem;margin-bottom:4px}
+.timeline-desc{font-size:0.8125rem;color:var(--gray-600);line-height:1.6}
+
+/* ACHIEVEMENTS */
+.achieve-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--gray-200);border:var(--border);border-radius:var(--radius);overflow:hidden;margin-top:3rem}
+.achieve-card{background:var(--white);padding:1.5rem}
+.achieve-level{font-size:0.625rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--gray-600);margin-bottom:0.75rem;border:var(--border);border-radius:100px;padding:3px 10px;display:inline-block}
+.achieve-name{font-weight:600;font-size:0.9375rem;margin-bottom:2px}
+.achieve-place{font-size:0.8125rem;color:var(--gray-600);margin-bottom:0.75rem}
+.achieve-award{font-size:0.8125rem;color:var(--black);line-height:1.5;border-left:2px solid var(--gray-200);padding-left:10px}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem}
+.testi-card{border:var(--border);border-radius:var(--radius);padding:1.75rem}
+.testi-quote{font-family:var(--serif);font-size:1.0625rem;line-height:1.6;margin-bottom:1.5rem;color:var(--black)}
+.testi-quote::before{content:'\201C';font-size:1.5rem;color:var(--gray-400);line-height:0;vertical-align:-0.4em;margin-right:2px}
+.testi-quote::after{content:'\201D';font-size:1.5rem;color:var(--gray-400);line-height:0;vertical-align:-0.4em;margin-left:2px}
+.testi-person{display:flex;gap:10px;align-items:center}
+.testi-avatar{width:36px;height:36px;border-radius:50%;background:var(--gray-100);border:var(--border);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;flex-shrink:0;color:var(--gray-600)}
+.testi-name{font-weight:600;font-size:0.875rem}
+.testi-role{font-size:0.75rem;color:var(--gray-600)}
+
+/* WHAT THEY GET */
+.gets-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--gray-200);border:var(--border);border-radius:var(--radius);overflow:hidden;margin-top:3rem}
+.get-card{background:var(--white);padding:2rem 1.75rem;display:flex;gap:1.25rem;align-items:flex-start}
+.get-icon{width:40px;height:40px;border:var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;color:var(--gray-600)}
+.get-title{font-weight:600;font-size:0.9375rem;margin-bottom:5px}
+.get-desc{font-size:0.8125rem;color:var(--gray-600);line-height:1.65}
+
+/* FAQ */
+.faq-list{margin-top:3rem;border:var(--border);border-radius:var(--radius);overflow:hidden}
+.faq-item{border-bottom:var(--border)}
+.faq-item:last-child{border-bottom:none}
+.faq-q{width:100%;background:none;border:none;text-align:left;padding:1.5rem 1.75rem;font-family:var(--sans);font-size:0.9375rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;color:var(--black)}
+.faq-q:hover{background:var(--gray-50)}
+.faq-chevron{font-size:1.1rem;color:var(--gray-400);transition:transform 0.2s;flex-shrink:0}
+.faq-a{padding:0 1.75rem 1.5rem;font-size:0.875rem;color:var(--gray-600);line-height:1.7;display:none}
+.faq-item.open .faq-a{display:block}
+.faq-item.open .faq-chevron{transform:rotate(45deg)}
+
+/* CTA SECTION */
+.cta-band{background:var(--gray-50);border-top:var(--border);border-bottom:var(--border);padding:5rem 2rem;text-align:center}
+.cta-band h2{font-family:var(--serif);font-size:clamp(2.5rem,5vw,4rem);letter-spacing:-0.025em;line-height:1.1;margin-bottom:1rem}
+.cta-band h2 em{font-style:italic;color:var(--gray-400)}
+.cta-band p{color:var(--gray-600);margin-bottom:2rem;font-size:1rem}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{padding:2rem;max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-brand{font-family:var(--serif);font-size:1.1rem;color:var(--black)}
+.footer-links{display:flex;gap:1.5rem}
+.footer-links a{font-size:0.8125rem;color:var(--gray-600);text-decoration:none}
+.footer-links a:hover{color:var(--black)}
+footer .copy{font-size:0.75rem;color:var(--gray-400)}
+
+@media(max-width:768px){
+  .steps,.age-grid,.projects-grid,.testi-grid,.gets-grid,.achieve-grid{grid-template-columns:1fr}
+  .step,.age-card{border-right:none;border-bottom:var(--border)}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .stat-cell{border-bottom:var(--border)}
+  .spotlight-inner{grid-template-columns:1fr}
+  .projects-header{grid-template-columns:1fr}
+  .timeline-row{grid-template-columns:80px 1fr}
+  nav .nav-pill{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-brand">RoboLab</a>
+  <div class="nav-pill">
+    <a href="#ages" class="active">Ages 13–17</a>
+    <a href="#micromouse">Micromouse</a>
+    <a href="#projects">Projects</a>
+  </div>
+  <div class="nav-right">
+    <a href="#faq">FAQ</a>
+    <a href="#trial" class="btn-primary">Book free trial →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Now enrolling · Ages 13–17</div>
+  <h1>Build real robots.<br><em>From scratch.</em></h1>
+  <p class="hero-sub">Live 1-on-1 classes with expert mentors. Hands-on kits delivered to your door. Real engineering projects — culminating in a Micromouse you design and race.</p>
+  <div class="hero-btns">
+    <a href="#trial" class="btn-primary">Book free trial →</a>
+    <a href="#ages" class="btn-outline">Explore curriculum</a>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-cell">
+      <span class="stat-num">500K+</span>
+      <span class="stat-label">Students trained</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">65</span>
+      <span class="stat-label">Countries</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">4.6/5</span>
+      <span class="stat-label">Parent rating</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Hands-on projects</span>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<div class="section" id="start">
+  <div class="section-eyebrow">Getting started</div>
+  <h2 class="section-heading">Three steps to your <em>first robot</em></h2>
+  <p class="section-sub">We've made starting as frictionless as possible — no prior experience, no equipment to source.</p>
+  <div class="steps">
+    <div class="step">
+      <span class="step-num">01</span>
+      <div class="step-title">Book a free trial class</div>
+      <p class="step-desc">Your first session is completely free. Your child learns about robots in a live class with a real mentor — you see how the program works. No credit card required.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">02</span>
+      <div class="step-title">Kit arrives at your door</div>
+      <p class="step-desc">We ship an age-appropriate robotics kit directly to your home — anywhere in the world. Everything needed to start building on day one, curated for the curriculum.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">03</span>
+      <div class="step-title">Build, code, and compete</div>
+      <p class="step-desc">Live 1-on-1 sessions with an expert mentor, progressing through real engineering projects — mechanics, electronics, Python — until you're ready to race your Micromouse.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- AGE GROUPS -->
+<div class="section" id="ages">
+  <div class="projects-header">
+    <div>
+      <div class="section-eyebrow">Curriculum by age</div>
+      <h2 class="section-heading">Right depth,<br><em>right pace</em></h2>
+    </div>
+    <a href="#trial" class="btn-outline">Book trial →</a>
+  </div>
+  <div class="age-grid">
+
+    <div class="age-card">
+      <div class="age-tag">Ages 13–14</div>
+      <div class="age-title">Engineering Foundations</div>
+      <div>
+        <div class="age-goal-label">Goal</div>
+        <p class="age-goal">Develop the ability to analyze real-world problems and design practical engineering solutions using robotics. Move beyond instructions into genuine system design.</p>
+      </div>
+      <div>
+        <div class="age-goal-label" style="margin-bottom:8px">What they'll build</div>
+        <p style="font-size:0.8125rem;color:var(--gray-600);line-height:1.6">Sensors-and-motors robots that respond to real situations. Students begin electronics work — visible circuits, not black-box kits. Many participate in local robotics challenges at this stage.</p>
+      </div>
+      <div class="age-skills">
+        <span class="skill-pill">Arduino</span>
+        <span class="skill-pill">Breadboard circuits</span>
+        <span class="skill-pill">Scratch → Python</span>
+        <span class="skill-pill">Sensor arrays</span>
+        <span class="skill-pill">CAD basics</span>
+      </div>
+    </div>
+
+    <div class="age-card">
+      <div class="age-tag">Ages 15–16</div>
+      <div class="age-title">Advanced Systems</div>
+      <div>
+        <div class="age-goal-label">Goal</div>
+        <p class="age-goal">Work confidently with advanced robotics technologies — integrating electronics, programming, and system design to build machines that perform reliably in real conditions.</p>
+      </div>
+      <div>
+        <div class="age-goal-label" style="margin-bottom:8px">What they'll build</div>
+        <p style="font-size:0.8125rem;color:var(--gray-600);line-height:1.6">Competition-ready systems, innovation prototypes, and advanced robotics projects. Strong portfolio pieces for university applications. National and international competition participation.</p>
+      </div>
+      <div class="age-skills">
+        <span class="skill-pill">Python / C++</span>
+        <span class="skill-pill">PID control</span>
+        <span class="skill-pill">Custom PCB</span>
+        <span class="skill-pill">Fusion 360</span>
+        <span class="skill-pill">GitHub</span>
+      </div>
+    </div>
+
+    <div class="age-card" style="border-left:3px solid var(--black)">
+      <div class="age-tag" style="background:var(--black);color:var(--white);border-color:var(--black)">Ages 15–17 · Final Project</div>
+      <div class="age-title">Micromouse<br>Race</div>
+      <div>
+        <div class="age-goal-label">Goal</div>
+        <p class="age-goal">Design, build, and race a fully autonomous Micromouse — a complete engineering capstone that synthesizes every skill in the program into one competitive project.</p>
+      </div>
+      <div>
+        <div class="age-goal-label" style="margin-bottom:8px">The challenge</div>
+        <p style="font-size:0.8125rem;color:var(--gray-600);line-height:1.6">Navigate a 16×16 cell maze — layout unknown until race day. Fastest autonomous run from corner to center wins. No human control allowed once it crosses the start line.</p>
+      </div>
+      <div class="age-skills">
+        <span class="skill-pill">Flood-fill / A*</span>
+        <span class="skill-pill">KiCad PCB</span>
+        <span class="skill-pill">STM32 / Arduino</span>
+        <span class="skill-pill">PID tuning</span>
+        <span class="skill-pill">Race Day</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- MICROMOUSE SPOTLIGHT -->
+<div class="spotlight" id="micromouse">
+  <div class="spotlight-inner">
+    <div>
+      <div class="section-eyebrow">The capstone project</div>
+      <h2 class="section-heading" style="font-size:clamp(2rem,4vw,3rem)">What is<br><em>Micromouse?</em></h2>
+      <p class="section-sub" style="margin-top:1rem">An IEEE engineering competition since 1977. Students build a tiny autonomous robot that maps and solves a 16×16 cell maze as fast as possible. No remote control. Just your code, your hardware, your algorithms.</p>
+      <div class="mouse-stat-grid">
+        <div class="mouse-stat">
+          <span class="mouse-stat-val">16×16</span>
+          <span class="mouse-stat-lbl">Maze cells</span>
+        </div>
+        <div class="mouse-stat">
+          <span class="mouse-stat-val">25cm</span>
+          <span class="mouse-stat-lbl">Max robot size</span>
+        </div>
+        <div class="mouse-stat">
+          <span class="mouse-stat-val">1977</span>
+          <span class="mouse-stat-lbl">IEEE origin year</span>
+        </div>
+        <div class="mouse-stat">
+          <span class="mouse-stat-val">0</span>
+          <span class="mouse-stat-lbl">Human control</span>
+        </div>
+      </div>
+    </div>
+    <div class="maze-container">
+      <svg viewBox="0 0 220 220" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+        <rect width="220" height="220" fill="rgba(255,255,255,0.03)" rx="4"/>
+        <g stroke="rgba(255,255,255,0.15)" stroke-width="0.5">
+          <line x1="27.5" y1="0" x2="27.5" y2="220"/><line x1="55" y1="0" x2="55" y2="220"/>
+          <line x1="82.5" y1="0" x2="82.5" y2="220"/><line x1="110" y1="0" x2="110" y2="220"/>
+          <line x1="137.5" y1="0" x2="137.5" y2="220"/><line x1="165" y1="0" x2="165" y2="220"/>
+          <line x1="192.5" y1="0" x2="192.5" y2="220"/>
+          <line x1="0" y1="27.5" x2="220" y2="27.5"/><line x1="0" y1="55" x2="220" y2="55"/>
+          <line x1="0" y1="82.5" x2="220" y2="82.5"/><line x1="0" y1="110" x2="220" y2="110"/>
+          <line x1="0" y1="137.5" x2="220" y2="137.5"/><line x1="0" y1="165" x2="220" y2="165"/>
+          <line x1="0" y1="192.5" x2="220" y2="192.5"/>
+        </g>
+        <rect x="1" y="1" width="218" height="218" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+        <g stroke="rgba(255,255,255,0.7)" stroke-width="1.8" stroke-linecap="round">
+          <line x1="27.5" y1="0" x2="27.5" y2="55"/>
+          <line x1="55" y1="27.5" x2="110" y2="27.5"/>
+          <line x1="82.5" y1="55" x2="82.5" y2="110"/>
+          <line x1="0" y1="82.5" x2="55" y2="82.5"/>
+          <line x1="110" y1="55" x2="165" y2="55"/>
+          <line x1="137.5" y1="27.5" x2="137.5" y2="82.5"/>
+          <line x1="165" y1="0" x2="165" y2="55"/>
+          <line x1="192.5" y1="27.5" x2="220" y2="27.5"/>
+          <line x1="55" y1="110" x2="55" y2="165"/>
+          <line x1="27.5" y1="137.5" x2="82.5" y2="137.5"/>
+          <line x1="110" y1="110" x2="110" y2="165"/>
+          <line x1="82.5" y1="165" x2="137.5" y2="165"/>
+          <line x1="165" y1="110" x2="220" y2="110"/>
+          <line x1="165" y1="82.5" x2="165" y2="137.5"/>
+          <line x1="192.5" y1="137.5" x2="192.5" y2="192.5"/>
+          <line x1="137.5" y1="192.5" x2="192.5" y2="192.5"/>
+          <line x1="27.5" y1="192.5" x2="27.5" y2="220"/>
+          <line x1="55" y1="192.5" x2="110" y2="192.5"/>
+        </g>
+        <rect x="96" y="96" width="27.5" height="27.5" fill="rgba(255,255,255,0.1)" rx="2"/>
+        <rect x="98" y="98" width="23.5" height="23.5" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1" rx="1"/>
+        <text x="109.75" y="113" fill="rgba(255,255,255,0.7)" font-size="7" text-anchor="middle" font-family="Geist,monospace" font-weight="600">GOAL</text>
+        <polyline points="7,213 7,185 7,158 34.5,158 34.5,130 34.5,103 62,103 62,76 89.5,76 89.5,103 117,103" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-dasharray="5,3"/>
+        <circle cx="7" cy="213" r="5.5" fill="white"/>
+        <circle cx="7" cy="213" r="3" fill="black"/>
+        <text x="20" y="216" fill="rgba(255,255,255,0.5)" font-size="7" font-family="Geist,monospace">START</text>
+      </svg>
+      <div class="maze-caption">Flood-fill distance map — bot finds its own path</div>
+    </div>
+  </div>
+</div>
+
+<!-- MICROMOUSE TIMELINE -->
+<div class="section" id="timeline">
+  <div class="section-eyebrow">Unit 6 · 8 weeks</div>
+  <h2 class="section-heading">The Micromouse<br><em>build schedule</em></h2>
+  <p class="section-sub">Each student builds their own mouse — no teams, no shortcuts. Individual design, individual race time.</p>
+  <div class="timeline">
+    <div class="timeline-row">
+      <div class="timeline-week"><span>Wks 1–2</span></div>
+      <div class="timeline-content">
+        <div class="timeline-title">Chassis design & PCB layout</div>
+        <p class="timeline-desc">CAD a two-wheeled chassis in Fusion 360. Design or modify a custom PCB in KiCad — motor drivers, IR sensor array, MCU footprint. Order boards for fabrication.</p>
+      </div>
+    </div>
+    <div class="timeline-row">
+      <div class="timeline-week"><span>Wks 3–4</span></div>
+      <div class="timeline-content">
+        <div class="timeline-title">Electronics & wiring</div>
+        <p class="timeline-desc">Solder components, wire up IR sensors (left, right, front), wheel encoders, DC motors, and the microcontroller. Bench-test each subsystem before integration.</p>
+      </div>
+    </div>
+    <div class="timeline-row">
+      <div class="timeline-week"><span>Wks 5–6</span></div>
+      <div class="timeline-content">
+        <div class="timeline-title">Flood-fill algorithm</div>
+        <p class="timeline-desc">Implement flood-fill in Python or C++. Simulate on a software maze first, then run on the classroom 8×8 practice maze. Debug wall detection and cell updates.</p>
+      </div>
+    </div>
+    <div class="timeline-row">
+      <div class="timeline-week"><span>Wks 7–8</span></div>
+      <div class="timeline-content">
+        <div class="timeline-title">Speed tuning & Race Day</div>
+        <p class="timeline-desc">PID-tune motors for maximum safe speed. Optimize the return run after mapping. Compete on the official 16×16 race maze — fastest qualifying time wins.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- PROJECTS GRID -->
+<div class="section" id="projects">
+  <div class="projects-header">
+    <div>
+      <div class="section-eyebrow">Curriculum projects</div>
+      <h2 class="section-heading">What they build<br><em>along the way</em></h2>
+    </div>
+  </div>
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-visual">
+        <svg viewBox="0 0 120 100" width="120" height="100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 80 Q30 30 60 50 Q90 70 110 20" fill="none" stroke="#d4d0c8" stroke-width="8" stroke-dasharray="3,3"/>
+          <rect x="50" y="42" width="20" height="14" rx="3" fill="#0a0a0a"/>
+          <circle cx="47" cy="49" r="3" fill="#888"/>
+          <circle cx="73" cy="49" r="3" fill="#888"/>
+          <circle cx="60" cy="64" r="4" fill="#0a0a0a"/>
+          <circle cx="60" cy="64" r="2" fill="#d4d0c8"/>
+        </svg>
+      </div>
+      <div class="project-body">
+        <div class="project-phase">Unit 3 · Electronics</div>
+        <div class="project-name">Line Following Robot</div>
+        <p class="project-desc">IR sensor array + PID control loop. Tracks a taped line at increasing speeds. First real closed-loop control system students build.</p>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-visual">
+        <svg viewBox="0 0 120 100" width="120" height="100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="35" y="30" width="50" height="40" rx="4" fill="#f0efec" stroke="#d4d0c8" stroke-width="1"/>
+          <rect x="42" y="37" width="14" height="10" rx="2" fill="#0a0a0a"/>
+          <rect x="64" y="37" width="14" height="10" rx="2" fill="#0a0a0a"/>
+          <rect x="42" y="53" width="36" height="8" rx="2" fill="#d4d0c8"/>
+          <rect x="42" y="53" width="22" height="8" rx="2" fill="#888"/>
+          <circle cx="22" cy="55" r="8" fill="none" stroke="#d4d0c8" stroke-width="1.5"/>
+          <circle cx="22" cy="55" r="4" fill="none" stroke="#888" stroke-width="1"/>
+          <circle cx="98" cy="55" r="8" fill="none" stroke="#d4d0c8" stroke-width="1.5"/>
+          <circle cx="98" cy="55" r="4" fill="none" stroke="#888" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="project-body">
+        <div class="project-phase">Unit 4 · Programming</div>
+        <div class="project-name">Obstacle Avoider</div>
+        <p class="project-desc">Ultrasonic ranging + state machine logic. Navigates a cluttered room autonomously. Introduces real-time decision loops in Python.</p>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-visual">
+        <svg viewBox="0 0 120 100" width="120" height="100" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" stroke="#d4d0c8" stroke-width="1">
+            <rect x="15" y="15" width="20" height="20" rx="1"/>
+            <rect x="35" y="15" width="20" height="20" rx="1"/>
+            <rect x="55" y="15" width="20" height="20" rx="1"/>
+            <rect x="55" y="35" width="20" height="20" rx="1"/>
+            <rect x="55" y="55" width="20" height="20" rx="1"/>
+            <rect x="35" y="55" width="20" height="20" rx="1"/>
+            <rect x="15" y="55" width="20" height="20" rx="1"/>
+            <rect x="15" y="35" width="20" height="20" rx="1"/>
+            <rect x="75" y="35" width="20" height="20" rx="1" fill="rgba(255,183,71,0.15)" stroke="#888"/>
+          </g>
+          <circle cx="20" cy="20" r="3.5" fill="#0a0a0a"/>
+          <polyline points="20,20 20,60 40,60 40,40 60,40 60,80 80,80 80,45" fill="none" stroke="#0a0a0a" stroke-width="1.8" stroke-dasharray="3,2"/>
+        </svg>
+      </div>
+      <div class="project-body">
+        <div class="project-phase">Unit 5 · Navigation</div>
+        <div class="project-name">Maze Solver</div>
+        <p class="project-desc">Right-hand rule, then A* pathfinding on a live-mapped grid. Direct precursor to Micromouse — students graduate naturally to the full 16×16.</p>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-visual">
+        <svg viewBox="0 0 120 100" width="120" height="100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="25" y="28" width="70" height="44" rx="4" fill="#f0efec" stroke="#d4d0c8" stroke-width="1"/>
+          <rect x="32" y="35" width="18" height="12" rx="2" fill="#0a0a0a"/>
+          <rect x="56" y="35" width="18" height="12" rx="2" fill="#0a0a0a"/>
+          <rect x="32" y="52" width="42" height="6" rx="1.5" fill="#d4d0c8"/>
+          <line x1="60" y1="28" x2="60" y2="16" stroke="#888" stroke-width="1.5"/>
+          <circle cx="60" cy="13" r="3" fill="#888"/>
+          <rect x="40" y="72" width="12" height="8" rx="2" fill="#0a0a0a"/>
+          <rect x="68" y="72" width="12" height="8" rx="2" fill="#0a0a0a"/>
+        </svg>
+      </div>
+      <div class="project-body">
+        <div class="project-phase">Unit 6 · Capstone</div>
+        <div class="project-name">Micromouse</div>
+        <p class="project-desc">The full capstone: custom chassis, soldered PCB, flood-fill algorithm, and a timed race on an official 16×16 maze. Every unit in the course feeds into this.</p>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-visual">
+        <svg viewBox="0 0 120 100" width="120" height="100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="20" width="80" height="60" rx="4" fill="#f0efec" stroke="#d4d0c8" stroke-width="1"/>
+          <rect x="28" y="28" width="28" height="20" rx="2" fill="#0a0a0a" opacity="0.8"/>
+          <rect x="64" y="28" width="28" height="20" rx="2" fill="#0a0a0a" opacity="0.5"/>
+          <line x1="28" y1="56" x2="92" y2="56" stroke="#d4d0c8" stroke-width="1"/>
+          <line x1="28" y1="62" x2="70" y2="62" stroke="#d4d0c8" stroke-width="1"/>
+          <line x1="28" y1="68" x2="55" y2="68" stroke="#d4d0c8" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="project-body">
+        <div class="project-phase">Unit 2 · Mechanical</div>
+        <div class="project-name">Custom Robot Chassis</div>
+        <p class="project-desc">Full CAD design in Fusion 360, 3D printed, assembled by hand. Students specify tolerances, pick fasteners, and revise based on load testing.</p>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-visual">
+        <svg viewBox="0 0 120 100" width="120" height="100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="50" r="28" fill="#f0efec" stroke="#d4d0c8" stroke-width="1"/>
+          <circle cx="60" cy="50" r="18" fill="none" stroke="#d4d0c8" stroke-width="1" stroke-dasharray="3,2"/>
+          <circle cx="60" cy="50" r="4" fill="#0a0a0a"/>
+          <line x1="60" y1="50" x2="82" y2="32" stroke="#0a0a0a" stroke-width="1.5"/>
+          <line x1="60" y1="50" x2="42" y2="66" stroke="#888" stroke-width="1"/>
+          <g stroke="#d4d0c8" stroke-width="1">
+            <line x1="60" y1="22" x2="60" y2="16"/>
+            <line x1="60" y1="84" x2="60" y2="78"/>
+            <line x1="32" y1="50" x2="26" y2="50"/>
+            <line x1="94" y1="50" x2="88" y2="50"/>
+          </g>
+        </svg>
+      </div>
+      <div class="project-body">
+        <div class="project-phase">Unit 3 · Electronics</div>
+        <div class="project-name">Encoder Odometry Bot</div>
+        <p class="project-desc">Wheel encoders + dead reckoning to navigate precise distances and angles without GPS. Foundational for any closed-loop mobile robot.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- STUDENT ACHIEVEMENTS -->
+<div class="section">
+  <div class="section-eyebrow">Real results</div>
+  <h2 class="section-heading">What students<br><em>go on to do</em></h2>
+  <p class="section-sub">A selection of student achievements from across the RoboLab community — competitions, innovations, and ventures.</p>
+  <div class="achieve-grid">
+    <div class="achieve-card">
+      <div class="achieve-level">Global</div>
+      <div class="achieve-name">Heyansh Aggarwal</div>
+      <div class="achieve-place">Delhi NCR, India</div>
+      <div class="achieve-award">Gold Medal, India Finals — Robotics for Good Youth Challenge (ITU, United Nations). Represented India at Geneva Global Finals.</div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-level">Global</div>
+      <div class="achieve-name">Sanaa Bhandari</div>
+      <div class="achieve-place">Luxembourg, Europe</div>
+      <div class="achieve-award">Silver Medal, Mobisciences Tunisia. Jonk Fuerscher (Young Researcher) Award in Luxembourg. Represented Luxembourg globally.</div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-level">National</div>
+      <div class="achieve-name">Prish Gandhi</div>
+      <div class="achieve-place">HCMC, Vietnam</div>
+      <div class="achieve-award">2nd Place Medal, World Robot Olympiad, South Vietnam. Competed at global robotics level against professional teams.</div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-level">Entrepreneurship</div>
+      <div class="achieve-name">Prem Sai</div>
+      <div class="achieve-place">IIT Delhi, India</div>
+      <div class="achieve-award">Founded Vecros, a drone startup. Raised external investment on Shark Tank India. Applied robotics expertise to real venture creation.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- TESTIMONIALS -->
+<div class="section">
+  <div class="section-eyebrow">From parents</div>
+  <h2 class="section-heading">Honest words from<br><em>real families</em></h2>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <p class="testi-quote">At first I thought Robotics for kids was just a fancy advertisement. After the free session I understood how it brings out the potential of my daughter. I also referred 3 of my colleagues.</p>
+      <div class="testi-person">
+        <div class="testi-avatar">AR</div>
+        <div>
+          <div class="testi-name">Dr. Amrutha Rajesh</div>
+          <div class="testi-role">Doctor & Professor, Navodaya Medical College</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <p class="testi-quote">My son loves the kit and sessions. For him, science is fun unlike what I felt in my childhood. I feel that itself is a major victory for me as a parent. He shows more interest towards science now.</p>
+      <div class="testi-person">
+        <div class="testi-avatar">DA</div>
+        <div>
+          <div class="testi-name">Dave Andrew</div>
+          <div class="testi-role">Equities Trader, California, USA</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <p class="testi-quote">During 3 years, more than 2,300 students of IIT Delhi participated in the design-build-fly workshop — a format that proved how much students learn when they build things with their hands.</p>
+      <div class="testi-person">
+        <div class="testi-avatar">PR</div>
+        <div>
+          <div class="testi-name">Prof. PVM Rao</div>
+          <div class="testi-role">Head of Design, IIT Delhi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- WHAT THEY GET -->
+<div class="section">
+  <div class="section-eyebrow">What's included</div>
+  <h2 class="section-heading">A complete<br><em>engineering education</em></h2>
+  <div class="gets-grid">
+    <div class="get-card">
+      <div class="get-icon">⚙️</div>
+      <div>
+        <div class="get-title">Hands-on robotics kit</div>
+        <p class="get-desc">An age-appropriate kit shipped to your home. Includes sensors, actuators, programmable boards, and mechanical components. Flexible enough to build thousands of project variations.</p>
+      </div>
+    </div>
+    <div class="get-card">
+      <div class="get-icon">👤</div>
+      <div>
+        <div class="get-title">Live 1-on-1 expert mentors</div>
+        <p class="get-desc">Every class is a private session with a trained mentor. No group classes, no recorded videos. Real-time guidance, real-time debugging, real engineering conversation.</p>
+      </div>
+    </div>
+    <div class="get-card">
+      <div class="get-icon">🏗️</div>
+      <div>
+        <div class="get-title">Real engineering projects</div>
+        <p class="get-desc">Students build multiple working robots that solve actual problems — not toy exercises. Every project has a physical artifact you can hold, show, and build upon.</p>
+      </div>
+    </div>
+    <div class="get-card">
+      <div class="get-icon">📂</div>
+      <div>
+        <div class="get-title">Portfolio & competition prep</div>
+        <p class="get-desc">GitHub repo, engineering notebook, and documented projects that serve as a real portfolio for university applications. Many students go on to national and international competitions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- FAQ -->
+<div class="section" id="faq">
+  <div class="section-eyebrow">Frequently asked</div>
+  <h2 class="section-heading">Questions<br><em>answered</em></h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">Does my child need any prior experience? <span class="faq-chevron">+</span></button>
+      <div class="faq-a">None at all. The curriculum starts from zero and progresses through mechanics, electronics, and programming in a structured sequence. The mentor assesses your child's starting level in the free trial and calibrates accordingly.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">What exactly is in the robotics kit? <span class="faq-chevron">+</span></button>
+      <div class="faq-a">The kit includes multiple sensors (IR, ultrasonic, gyroscope, encoders), actuators (DC motors, servos), programmable microcontrollers, a breadboard, mechanical components, and all wiring. For older students building the Micromouse, PCB fabrication and a custom component list are also provided.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">How realistic is the Micromouse project for a 15-year-old? <span class="faq-chevron">+</span></button>
+      <div class="faq-a">Very realistic — with the right scaffolding. Students at this age have already built simpler robots throughout the course, so the Micromouse is a synthesis, not a leap into the unknown. The mentor guides the PCB design and algorithm implementation. Expect the mechanical and electrical work to be harder than the coding — the flood-fill algorithm is intuitive once they've visualized it.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">When are classes scheduled? <span class="faq-chevron">+</span></button>
+      <div class="faq-a">Classes run 24/7 globally — you pick the slot that works for your family. Because sessions are 1-on-1, scheduling is fully flexible and can be adjusted week to week.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">Can my child build their own ideas beyond the curriculum? <span class="faq-chevron">+</span></button>
+      <div class="faq-a">Absolutely — that's the goal. Mentors actively encourage students to bring their own ideas into sessions. The kit is modular by design and the skills transfer. Many students build personal projects, science fair entries, and competition robots on top of the core curriculum.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggle(this)">What does this do for college applications? <span class="faq-chevron">+</span></button>
+      <div class="faq-a">Students graduate with a documented GitHub repository, engineering notebook, and a physical Micromouse they built themselves. Many also have competition placements (regional, national, or international). Engineering admissions teams respond well to evidence of real technical work — not just participation certificates.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA BAND -->
+<div class="cta-band" id="trial">
+  <h2>Start building.<br><em>First class is free.</em></h2>
+  <p>No credit card required. No prior experience needed. Just curiosity and a willingness to build real things.</p>
+  <div class="cta-btns">
+    <a href="#" class="btn-primary">Book free trial class →</a>
+    <a href="#ages" class="btn-outline">Explore curriculum</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-brand">RoboLab</span>
+  <div class="footer-links">
+    <a href="#ages">Curriculum</a>
+    <a href="#micromouse">Micromouse</a>
+    <a href="#faq">FAQ</a>
+    <a href="#">Contact</a>
+  </div>
+  <span class="copy">© 2025 RoboLab. All rights reserved.</span>
+</footer>
+
+<script>
+function toggle(btn){
+  const item=btn.closest('.faq-item');
+  const wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!wasOpen)item.classList.add('open');
+}
+document.querySelectorAll('.nav-pill a').forEach(a=>{
+  a.addEventListener('click',function(){
+    document.querySelectorAll('.nav-pill a').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
