@@ -424,7 +424,7 @@ const PLANS = {
 
 // ─── STRIPE SETUP ────────────────────────────────────────────────────────────
 // 🔑 Replace with your Stripe publishable key:
-const STRIPE_PUBLISHABLE_KEY = 'pk_live_XXXXXXXXXXXXXXXXXXXXXXXX';
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TVqvLRCkDoR0jLsFRh7x9ElRkYJOmKqyzs4TlZgIOGwdBtggMuoBNwXv7miZEIMbp8S3F5GvjaK2n9zfEzMeXYP00eMT4tNAO';
 
 let stripe, elements, cardElement, paymentRequest;
 let currentPlan = 'guided';
@@ -502,46 +502,35 @@ document.getElementById('checkoutModal').addEventListener('click', (e) => {
 
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-// ─── FORM SUBMIT ─────────────────────────────────────────────────────────────
+// ─── FORM SUBMIT → Stripe Checkout ───────────────────────────────────────────
 document.getElementById('payment-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (!stripe) {
-    showMessage('Please connect your Stripe account to process payments.', 'error');
-    return;
-  }
 
   const btn = document.getElementById('submit-btn');
   btn.classList.add('loading');
   btn.disabled = true;
 
-  const name = document.getElementById('customer-name').value;
-  const email = document.getElementById('customer-email').value;
+  try {
+    const res = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: currentPlan })
+    });
 
-  // Create PaymentMethod
-  const { error, paymentMethod } = await stripe.createPaymentMethod({
-    type: 'card',
-    card: cardElement,
-    billing_details: { name, email }
-  });
+    const data = await res.json();
 
-  if (error) {
-    showMessage(error.message, 'error');
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      showMessage(data.error || 'Something went wrong. Please try again.', 'error');
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  } catch (err) {
+    showMessage('Network error. Please try again.', 'error');
     btn.classList.remove('loading');
     btn.disabled = false;
-    return;
   }
-
-  // ⚠️ Send paymentMethod.id + plan to YOUR backend to:
-  // 1. Create a Stripe Customer
-  // 2. Create a Subscription with the chosen price ID
-  // 3. Return client_secret to confirm if needed
-  console.log('PaymentMethod created:', paymentMethod.id);
-  console.log('Plan:', PLANS[currentPlan].stripePrice);
-
-  // Simulate success for now — replace with real backend call
-  showMessage('Payment successful! Welcome to RoboLab. Check your email for next steps.', 'success');
-  btn.classList.remove('loading');
-  btn.disabled = false;
 });
 
 function showMessage(msg, type) {
@@ -549,6 +538,21 @@ function showMessage(msg, type) {
   el.textContent = msg;
   el.className = 'payment-message ' + type;
 }
+
+// ─── HANDLE REDIRECT BACK FROM STRIPE ────────────────────────────────────────
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('success') === 'true') {
+    const plan = params.get('plan') || 'guided';
+    document.querySelector('.hero h1').innerHTML = 'You\'re <em>enrolled!</em>';
+    document.querySelector('.hero-sub').textContent = 'Welcome to RoboLab. Check your inbox for your kit shipping info and first session details.';
+    document.querySelector('.pricing-section').style.display = 'none';
+    window.history.replaceState({}, '', '/checkout.html');
+  }
+  if (params.get('canceled') === 'true') {
+    window.history.replaceState({}, '', '/checkout.html');
+  }
+})();
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 window.addEventListener('load', initStripe);
