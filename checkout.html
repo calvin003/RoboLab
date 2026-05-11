@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://js.stripe.com/v3/"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -165,7 +164,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
   </div>
   <div class="nav-right">
     <a href="#">FAQ</a>
-    <button class="btn-primary" onclick="openModal('guided')">Enroll now →</button>
+    <button class="btn-primary" onclick="goToCheckout('guided')">Enroll now →</button>
   </div>
 </nav>
 
@@ -181,7 +180,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
   <div class="pricing-grid">
 
     <!-- STARTER -->
-    <div class="plan-card" onclick="openModal('starter')">
+    <div class="plan-card" onclick="goToCheckout('starter')">
       <div class="plan-badge">Starter</div>
       <div class="plan-name">Micromouse<br>Track</div>
       <div class="plan-price">
@@ -216,7 +215,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
     </div>
 
     <!-- GUIDED (FEATURED) -->
-    <div class="plan-card featured" onclick="openModal('guided')">
+    <div class="plan-card featured" onclick="goToCheckout('guided')">
       <div class="plan-badge">Most Popular</div>
       <div class="plan-name">AI + Projects<br>Track</div>
       <div class="plan-price">
@@ -251,7 +250,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
     </div>
 
     <!-- ELITE -->
-    <div class="plan-card" onclick="openModal('elite')">
+    <div class="plan-card" onclick="goToCheckout('elite')">
       <div class="plan-badge">Elite</div>
       <div class="plan-name">Full Capstone<br>Track</div>
       <div class="plan-price">
@@ -320,78 +319,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
   </div>
 </div>
 
-<!-- CHECKOUT MODAL -->
-<div class="modal-overlay" id="checkoutModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <div class="modal-plan-name" id="modalPlanName">AI + Projects Track</div>
-        <div class="modal-plan-price" id="modalPlanPrice">$249 / month</div>
-      </div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-
-      <!-- ORDER SUMMARY -->
-      <div class="order-summary">
-        <div class="order-row">
-          <span class="order-label" id="summaryPlan">AI + Projects Track</span>
-          <span class="order-value" id="summaryPrice">$249/mo</span>
-        </div>
-        <div class="order-row">
-          <span class="order-label">Hardware kit (shipping)</span>
-          <span class="order-value">Free</span>
-        </div>
-        <div class="order-row total">
-          <span class="order-label">Due today</span>
-          <span class="order-value" id="summaryTotal">$249.00</span>
-        </div>
-      </div>
-
-      <!-- VENMO EXPRESS CHECKOUT -->
-      <div class="modal-section-label">Pay faster</div>
-      <div id="payment-request-button">
-        <button type="button" class="venmo-btn" id="venmo-btn" onclick="submitToStripeCheckout()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M20.25 2c.69 1.148.998 2.33.998 3.82 0 4.763-4.067 10.952-7.373 15.303H6.84L4 2.956l5.876-.558 1.479 11.928C12.9 11.64 15.16 7.08 15.16 4.21c0-1.558-.266-2.614-.73-3.478L20.25 2z"/></svg>
-          Pay with Venmo
-        </button>
-      </div>
-
-      <div class="pay-divider"><span>or pay with card</span></div>
-
-      <!-- CARD FORM -->
-      <form id="payment-form">
-        <div class="form-field">
-          <label>Full name</label>
-          <input type="text" id="customer-name" placeholder="Alex Johnson" autocomplete="name">
-        </div>
-        <div class="form-field">
-          <label>Email</label>
-          <input type="email" id="customer-email" placeholder="alex@example.com" autocomplete="email">
-        </div>
-
-        <div class="modal-section-label" style="margin-top:1rem;margin-bottom:0.75rem">Card details</div>
-        <div class="stripe-field" id="card-element">
-          <!-- Stripe Card Element mounts here -->
-          <div id="card-placeholder" style="font-size:0.875rem;color:var(--gray-400);padding:2px 0;">
-            Card number — connect Stripe to enable
-          </div>
-        </div>
-
-        <div id="payment-message" class="payment-message"></div>
-
-        <button class="submit-btn" id="submit-btn" type="submit">
-          <div class="spinner"></div>
-          <span class="btn-text">Complete enrollment →</span>
-        </button>
-
-        <p style="font-size:0.75rem;color:var(--gray-400);text-align:center;margin-top:1rem;line-height:1.6">
-          By enrolling you agree to our Terms of Service. Your subscription renews monthly. Cancel anytime.
-        </p>
-      </form>
-    </div>
-  </div>
-</div>
 
 <script>
 // ─── PLAN DATA ───────────────────────────────────────────────────────────────
@@ -425,118 +352,32 @@ const PLANS = {
   }
 };
 
-// ─── STRIPE SETUP ────────────────────────────────────────────────────────────
-// 🔑 Replace with your Stripe publishable key:
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_51TVqvLRCkDoR0jLsFRh7x9ElRkYJOmKqyzs4TlZgIOGwdBtggMuoBNwXv7miZEIMbp8S3F5GvjaK2n9zfEzMeXYP00eMT4tNAO';
-
-let stripe, elements, cardElement, paymentRequest;
 let currentPlan = 'guided';
 
-function initStripe() {
-  if (!STRIPE_PUBLISHABLE_KEY.startsWith('pk_')) return;
-  stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-  elements = stripe.elements();
 
-  // Card Element
-  cardElement = elements.create('card', {
-    style: {
-      base: {
-        fontFamily: "'Geist', system-ui, sans-serif",
-        fontSize: '15px',
-        color: '#0a0a0a',
-        '::placeholder': { color: '#a8a49c' }
-      }
-    },
-    hidePostalCode: false
-  });
-  cardElement.mount('#card-element');
-  document.getElementById('card-placeholder').style.display = 'none';
-
-}
-
-// ─── MODAL ───────────────────────────────────────────────────────────────────
-function openModal(planKey) {
+// ─── GO TO STRIPE CHECKOUT ───────────────────────────────────────────────────
+async function goToCheckout(planKey) {
   currentPlan = planKey;
-  const plan = PLANS[planKey];
-  document.getElementById('modalPlanName').textContent = plan.name;
-  document.getElementById('modalPlanPrice').textContent = plan.price + ' ' + plan.period;
-  document.getElementById('summaryPlan').textContent = plan.name;
-  document.getElementById('summaryPrice').textContent = plan.summary;
-  document.getElementById('summaryTotal').textContent = plan.total;
-  if (paymentRequest) paymentRequest.update({ total: { label: 'RoboLab', amount: plan.amount } });
-  document.getElementById('checkoutModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  document.getElementById('checkoutModal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-document.getElementById('checkoutModal').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) closeModal();
-});
-
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-
-// ─── APPLE PAY BTN → Stripe Checkout ────────────────────────────────────────
-async function submitToStripeCheckout() {
-  const appleBtn = document.getElementById('venmo-btn');
-  if (appleBtn) { appleBtn.disabled = true; appleBtn.style.opacity = '0.6'; }
+  // Show loading state on the clicked button
+  const cards = document.querySelectorAll('.plan-cta');
+  cards.forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
   try {
     const res = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan: currentPlan })
+      body: JSON.stringify({ plan: planKey })
     });
     const data = await res.json();
     if (data.url) {
       window.location.href = data.url;
     } else {
-      showMessage(data.error || 'Something went wrong. Please try again.', 'error');
-      if (appleBtn) { appleBtn.disabled = false; appleBtn.style.opacity = ''; }
+      cards.forEach(b => { b.disabled = false; b.style.opacity = ''; });
+      alert(data.error || 'Something went wrong. Please try again.');
     }
   } catch (err) {
-    showMessage('Network error. Please try again.', 'error');
-    if (appleBtn) { appleBtn.disabled = false; appleBtn.style.opacity = ''; }
+    cards.forEach(b => { b.disabled = false; b.style.opacity = ''; });
+    alert('Network error. Please try again.');
   }
-}
-
-// ─── FORM SUBMIT → Stripe Checkout ───────────────────────────────────────────
-document.getElementById('payment-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const btn = document.getElementById('submit-btn');
-  btn.classList.add('loading');
-  btn.disabled = true;
-
-  try {
-    const res = await fetch('/api/create-checkout-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan: currentPlan })
-    });
-
-    const data = await res.json();
-
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      showMessage(data.error || 'Something went wrong. Please try again.', 'error');
-      btn.classList.remove('loading');
-      btn.disabled = false;
-    }
-  } catch (err) {
-    showMessage('Network error. Please try again.', 'error');
-    btn.classList.remove('loading');
-    btn.disabled = false;
-  }
-});
-
-function showMessage(msg, type) {
-  const el = document.getElementById('payment-message');
-  el.textContent = msg;
-  el.className = 'payment-message ' + type;
 }
 
 // ─── HANDLE REDIRECT BACK FROM STRIPE ────────────────────────────────────────
@@ -554,8 +395,6 @@ function showMessage(msg, type) {
   }
 })();
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-window.addEventListener('load', initStripe);
 </script>
 </body>
 </html>
