@@ -498,21 +498,22 @@ async function handleFormSubmit(e) {
   };
 
   try {
-    const res = await fetch('https://formspree.io/f/xwpbdgpw', {
+    const res = await fetch('/api/contact', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     if (res.ok) {
       document.getElementById('modal-form-body').style.display = 'none';
       document.getElementById('modal-success').classList.add('visible');
     } else {
-      throw new Error('Submit failed');
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || 'Submit failed');
     }
   } catch (err) {
     btn.classList.remove('loading');
     btn.disabled = false;
-    showError('Something went wrong. Please try again or email us directly at calvins.brew@gmail.com');
+    showError(err.message || 'Something went wrong. Please try again or email info.robolabs1@gmail.com');
   }
 }
 
