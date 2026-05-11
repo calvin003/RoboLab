@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RoboLab — Enroll</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0a0a0a;
+  --white:#ffffff;
+  --gray-50:#f9f9f8;
+  --gray-100:#f0efec;
+  --gray-200:#e4e2dc;
+  --gray-400:#a8a49c;
+  --gray-600:#6b6760;
+  --gray-800:#2c2b28;
+  --serif:'Instrument Serif',Georgia,serif;
+  --sans:'Geist',system-ui,sans-serif;
+  --border:1px solid var(--gray-200);
+  --radius:10px;
+  --accent:#0a0a0a;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--white);color:var(--black);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:var(--border);padding:0 2rem;height:58px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{font-family:var(--serif);font-size:1.35rem;letter-spacing:-0.01em;color:var(--black);text-decoration:none}
+.nav-pill{display:flex;background:var(--gray-100);border-radius:100px;padding:4px;gap:2px}
+.nav-pill a{padding:6px 18px;border-radius:100px;font-size:0.8125rem;font-weight:500;color:var(--gray-600);text-decoration:none;transition:all 0.15s}
+.nav-pill a.active,.nav-pill a:hover{background:var(--white);color:var(--black);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.nav-right{display:flex;align-items:center;gap:1rem}
+.nav-right a{font-size:0.875rem;color:var(--gray-600);text-decoration:none}
+.btn-primary{background:var(--black);color:var(--white);padding:8px 20px;border-radius:100px;font-size:0.875rem;font-weight:500;text-decoration:none;border:none;cursor:pointer;font-family:var(--sans);transition:opacity 0.15s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary:hover{opacity:0.85}
+
+/* HERO */
+.hero{padding:5rem 2rem 3rem;max-width:1100px;margin:0 auto;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;border:var(--border);border-radius:100px;padding:5px 16px;font-size:0.75rem;font-weight:500;color:var(--gray-600);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:2rem}
+.hero-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--black);display:inline-block}
+.hero h1{font-family:var(--serif);font-size:clamp(2.5rem,5vw,4.5rem);line-height:1.05;letter-spacing:-0.025em;font-weight:400;margin-bottom:1rem}
+.hero h1 em{font-style:italic;color:var(--gray-400)}
+.hero-sub{font-size:1rem;color:var(--gray-600);max-width:480px;margin:0 auto 1rem;line-height:1.7}
+
+/* PRICING GRID */
+.pricing-section{max-width:1100px;margin:0 auto;padding:2rem 2rem 6rem}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--gray-200);border:var(--border);border-radius:var(--radius);overflow:hidden}
+.plan-card{background:var(--white);padding:2rem 1.75rem;display:flex;flex-direction:column;gap:0;transition:background 0.15s;cursor:pointer;position:relative}
+.plan-card:hover{background:var(--gray-50)}
+.plan-card.featured{background:var(--black);color:var(--white)}
+.plan-card.featured:hover{background:#1a1a1a}
+.plan-badge{display:inline-block;font-size:0.625rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border-radius:100px;padding:3px 10px;margin-bottom:1.25rem;width:fit-content}
+.plan-card:not(.featured) .plan-badge{border:var(--border);color:var(--gray-600)}
+.plan-card.featured .plan-badge{background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.2)}
+.plan-name{font-family:var(--serif);font-size:1.6rem;letter-spacing:-0.02em;line-height:1.1;margin-bottom:0.5rem}
+.plan-card.featured .plan-name{color:var(--white)}
+.plan-price{display:flex;align-items:baseline;gap:4px;margin:1.25rem 0}
+.plan-price-amount{font-family:var(--serif);font-size:2.75rem;letter-spacing:-0.03em;line-height:1}
+.plan-price-period{font-size:0.8125rem;color:var(--gray-600)}
+.plan-card.featured .plan-price-period{color:rgba(255,255,255,0.5)}
+.plan-desc{font-size:0.875rem;color:var(--gray-600);line-height:1.65;margin-bottom:1.5rem;min-height:60px}
+.plan-card.featured .plan-desc{color:rgba(255,255,255,0.6)}
+.plan-divider{border:none;border-top:var(--border);margin-bottom:1.5rem}
+.plan-card.featured .plan-divider{border-color:rgba(255,255,255,0.12)}
+.plan-features{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:2rem;flex:1}
+.plan-feature{display:flex;align-items:flex-start;gap:10px;font-size:0.8125rem;line-height:1.5}
+.plan-feature-icon{width:16px;height:16px;flex-shrink:0;margin-top:1px}
+.plan-card:not(.featured) .plan-feature{color:var(--gray-800)}
+.plan-card.featured .plan-feature{color:rgba(255,255,255,0.8)}
+.plan-cta{width:100%;padding:11px;border-radius:100px;font-size:0.875rem;font-weight:500;font-family:var(--sans);cursor:pointer;transition:all 0.15s;border:none;text-align:center}
+.plan-card:not(.featured) .plan-cta{background:var(--black);color:var(--white)}
+.plan-card:not(.featured) .plan-cta:hover{opacity:0.85}
+.plan-card.featured .plan-cta{background:var(--white);color:var(--black)}
+.plan-card.featured .plan-cta:hover{background:var(--gray-100)}
+
+/* MODAL OVERLAY */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.18);transform:translateY(12px);transition:transform 0.2s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:1.75rem 1.75rem 0;display:flex;justify-content:space-between;align-items:flex-start}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--gray-400);font-size:1.25rem;line-height:1;padding:4px;border-radius:6px;transition:color 0.15s}
+.modal-close:hover{color:var(--black)}
+.modal-plan-name{font-family:var(--serif);font-size:1.4rem;letter-spacing:-0.02em}
+.modal-plan-price{font-size:0.875rem;color:var(--gray-600);margin-top:2px}
+.modal-body{padding:1.5rem 1.75rem}
+.modal-section-label{font-size:0.6875rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-600);margin-bottom:0.75rem}
+
+/* APPLE PAY / PAYMENT REQUEST */
+#payment-request-button{margin-bottom:1rem}
+.pay-divider{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}
+.pay-divider::before,.pay-divider::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+.pay-divider span{font-size:0.75rem;color:var(--gray-400);white-space:nowrap}
+
+/* STRIPE ELEMENTS */
+.stripe-field{border:var(--border);border-radius:8px;padding:13px 14px;transition:border-color 0.15s;background:var(--white)}
+.stripe-field:focus-within{border-color:var(--black)}
+.stripe-field-label{font-size:0.75rem;color:var(--gray-600);margin-bottom:6px;display:block}
+.stripe-field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.form-field{margin-bottom:12px}
+.form-field label{font-size:0.75rem;color:var(--gray-600);display:block;margin-bottom:6px}
+.form-field input{width:100%;border:var(--border);border-radius:8px;padding:13px 14px;font-size:0.875rem;font-family:var(--sans);color:var(--black);outline:none;transition:border-color 0.15s;background:var(--white)}
+.form-field input:focus{border-color:var(--black)}
+.form-field input::placeholder{color:var(--gray-400)}
+
+/* ORDER SUMMARY */
+.order-summary{background:var(--gray-50);border:var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
+.order-row{display:flex;justify-content:space-between;align-items:center;font-size:0.875rem}
+.order-row+.order-row{margin-top:8px;padding-top:8px;border-top:var(--border)}
+.order-row.total{font-weight:600}
+.order-label{color:var(--gray-600)}
+.order-value{color:var(--black)}
+
+/* SUBMIT */
+.submit-btn{width:100%;padding:14px;background:var(--black);color:var(--white);border:none;border-radius:100px;font-size:0.9375rem;font-weight:500;font-family:var(--sans);cursor:pointer;transition:opacity 0.15s;margin-top:1.25rem;display:flex;align-items:center;justify-content:center;gap:8px}
+.submit-btn:hover{opacity:0.85}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed}
+.submit-btn .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:none}
+.submit-btn.loading .spinner{display:block}
+.submit-btn.loading .btn-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ERROR / SUCCESS */
+.payment-message{font-size:0.8125rem;border-radius:8px;padding:10px 14px;margin-top:12px;display:none}
+.payment-message.error{background:#fff0f0;color:#c0392b;border:1px solid #ffc0c0;display:block}
+.payment-message.success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;display:block}
+
+/* TRUST BAR */
+.trust-bar{border-top:var(--border);background:var(--gray-50);padding:1.5rem 2rem}
+.trust-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:2.5rem;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:8px;font-size:0.8125rem;color:var(--gray-600)}
+
+/* GUARANTEE */
+.guarantee{max-width:1100px;margin:0 auto;padding:3rem 2rem;text-align:center}
+.guarantee-inner{border:var(--border);border-radius:var(--radius);padding:2.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem;max-width:560px;margin:0 auto}
+.guarantee-icon{width:48px;height:48px;border:var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--gray-50)}
+.guarantee h3{font-family:var(--serif);font-size:1.5rem;letter-spacing:-0.02em}
+.guarantee p{font-size:0.875rem;color:var(--gray-600);line-height:1.7;max-width:380px}
+
+@media(max-width:768px){
+  .pricing-grid{grid-template-columns:1fr}
+  .plan-card{border-right:none;border-bottom:var(--border)}
+  .modal{border-radius:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="index.html">RoboLab</a>
+  <div class="nav-pill">
+    <a href="index.html#levels">Levels</a>
+    <a href="index.html#capstone">Capstone</a>
+    <a href="index.html#projects">AI + Projects</a>
+    <a href="index.html#instructor">Instructor</a>
+  </div>
+  <div class="nav-right">
+    <a href="#">FAQ</a>
+    <button class="btn-primary" onclick="openModal('guided')">Enroll now →</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">Now Enrolling · Ages 13–17</div>
+  <h1>Choose your <em>track.</em></h1>
+  <p class="hero-sub">All plans include a hardware kit shipped to your door, real AI + robotics projects, and a capstone you actually ship.</p>
+</div>
+
+<!-- PRICING -->
+<div class="pricing-section">
+  <div class="pricing-grid">
+
+    <!-- STARTER -->
+    <div class="plan-card" onclick="openModal('starter')">
+      <div class="plan-badge">Starter</div>
+      <div class="plan-name">Micromouse<br>Track</div>
+      <div class="plan-price">
+        <span class="plan-price-amount">$149</span>
+        <span class="plan-price-period">/ month</span>
+      </div>
+      <p class="plan-desc">Self-paced curriculum with group live Q&amp;A sessions weekly. Perfect for self-driven learners.</p>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#e4e2dc"/><path d="M5 8l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Full curriculum access (all levels)
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#e4e2dc"/><path d="M5 8l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Hardware kit shipped to your door
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#e4e2dc"/><path d="M5 8l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Weekly group Q&amp;A (live)
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#e4e2dc"/><path d="M5 8l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Community Discord access
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#e4e2dc"/><path d="M5 8l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Capstone project support
+        </li>
+      </ul>
+      <button class="plan-cta">Get started →</button>
+    </div>
+
+    <!-- GUIDED (FEATURED) -->
+    <div class="plan-card featured" onclick="openModal('guided')">
+      <div class="plan-badge">Most Popular</div>
+      <div class="plan-name">AI + Projects<br>Track</div>
+      <div class="plan-price">
+        <span class="plan-price-amount">$249</span>
+        <span class="plan-price-period">/ month</span>
+      </div>
+      <p class="plan-desc">Biweekly live 1-on-1 sessions with an expert mentor. Real projects, real feedback.</p>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="rgba(255,255,255,0.2)"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Everything in Micromouse
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="rgba(255,255,255,0.2)"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          2× monthly 1-on-1 live sessions
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="rgba(255,255,255,0.2)"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Personalized learning roadmap
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="rgba(255,255,255,0.2)"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Code review &amp; project feedback
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="rgba(255,255,255,0.2)"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Priority email support
+        </li>
+      </ul>
+      <button class="plan-cta">Enroll now →</button>
+    </div>
+
+    <!-- ELITE -->
+    <div class="plan-card" onclick="openModal('elite')">
+      <div class="plan-badge">Elite</div>
+      <div class="plan-name">Full Capstone<br>Track</div>
+      <div class="plan-price">
+        <span class="plan-price-amount">$349</span>
+        <span class="plan-price-period">/ month</span>
+      </div>
+      <p class="plan-desc">Weekly 1-on-1 sessions and full capstone mentorship from idea to shipping to a real user.</p>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#e4e2dc"/><path d="M5 8l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Everything in AI + Projects
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#e4e2dc"/><path d="M5 8l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          4× monthly 1-on-1 live sessions
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#e4e2dc"/><path d="M5 8l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Full capstone mentorship
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#e4e2dc"/><path d="M5 8l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Ship to a real user (guided)
+        </li>
+        <li class="plan-feature">
+          <svg class="plan-feature-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.5" stroke="#e4e2dc"/><path d="M5 8l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          College portfolio prep support
+        </li>
+      </ul>
+      <button class="plan-cta">Get started →</button>
+    </div>
+  </div>
+</div>
+
+<!-- GUARANTEE -->
+<div class="guarantee">
+  <div class="guarantee-inner">
+    <div class="guarantee-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L3 6v5c0 4.418 3.358 8.542 8 9.5C16.642 19.542 20 15.418 20 11V6l-8-4z" stroke="#0a0a0a" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 11l2 2 4-4" stroke="#0a0a0a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h3>14-day money-back guarantee</h3>
+    <p>If you're not completely satisfied within the first two weeks, we'll refund you in full — no questions asked.</p>
+  </div>
+</div>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-item">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="10" rx="2" stroke="#6b6760" stroke-width="1.25"/><path d="M1 7h14" stroke="#6b6760" stroke-width="1.25"/><path d="M5 10.5h2M9 10.5h2" stroke="#6b6760" stroke-width="1.25" stroke-linecap="round"/></svg>
+      Secure payment via Stripe
+    </div>
+    <div class="trust-item">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L10.163 5.382L15 6.09L11.5 9.5L12.326 14.318L8 12.045L3.674 14.318L4.5 9.5L1 6.09L5.837 5.382L8 1Z" stroke="#6b6760" stroke-width="1.25" stroke-linejoin="round"/></svg>
+      4.8/5 average instructor rating
+    </div>
+    <div class="trust-item">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#6b6760" stroke-width="1.25"/><path d="M8 4.5v4l2.5 1.5" stroke="#6b6760" stroke-width="1.25" stroke-linecap="round"/></svg>
+      Cancel anytime, no lock-in
+    </div>
+    <div class="trust-item">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.41 1.5 1.5 4.41 1.5 8S4.41 14.5 8 14.5 14.5 11.59 14.5 8 11.59 1.5 8 1.5z" stroke="#6b6760" stroke-width="1.25"/><path d="M6 8.5s.5 1.5 2 1.5 2-1.5 2-1.5M6.5 6.5h.01M9.5 6.5h.01" stroke="#6b6760" stroke-width="1.25" stroke-linecap="round"/></svg>
+      Kit delivered free in US
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-plan-name" id="modalPlanName">AI + Projects Track</div>
+        <div class="modal-plan-price" id="modalPlanPrice">$249 / month</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- ORDER SUMMARY -->
+      <div class="order-summary">
+        <div class="order-row">
+          <span class="order-label" id="summaryPlan">AI + Projects Track</span>
+          <span class="order-value" id="summaryPrice">$249/mo</span>
+        </div>
+        <div class="order-row">
+          <span class="order-label">Hardware kit (shipping)</span>
+          <span class="order-value">Free</span>
+        </div>
+        <div class="order-row total">
+          <span class="order-label">Due today</span>
+          <span class="order-value" id="summaryTotal">$249.00</span>
+        </div>
+      </div>
+
+      <!-- APPLE PAY / PAYMENT REQUEST -->
+      <div class="modal-section-label">Express checkout</div>
+      <div id="payment-request-button">
+        <!-- Apple Pay / Google Pay rendered here by Stripe -->
+        <div id="payment-request-placeholder" style="background:var(--gray-100);border-radius:8px;height:44px;display:flex;align-items:center;justify-content:center;font-size:0.8125rem;color:var(--gray-400);">
+          Apple Pay / Google Pay (connect Stripe to enable)
+        </div>
+      </div>
+
+      <div class="pay-divider"><span>or pay with card</span></div>
+
+      <!-- CARD FORM -->
+      <form id="payment-form">
+        <div class="form-field">
+          <label>Full name</label>
+          <input type="text" id="customer-name" placeholder="Alex Johnson" autocomplete="name">
+        </div>
+        <div class="form-field">
+          <label>Email</label>
+          <input type="email" id="customer-email" placeholder="alex@example.com" autocomplete="email">
+        </div>
+
+        <div class="modal-section-label" style="margin-top:1rem;margin-bottom:0.75rem">Card details</div>
+        <div class="stripe-field" id="card-element">
+          <!-- Stripe Card Element mounts here -->
+          <div id="card-placeholder" style="font-size:0.875rem;color:var(--gray-400);padding:2px 0;">
+            Card number — connect Stripe to enable
+          </div>
+        </div>
+
+        <div id="payment-message" class="payment-message"></div>
+
+        <button class="submit-btn" id="submit-btn" type="submit">
+          <div class="spinner"></div>
+          <span class="btn-text">Complete enrollment →</span>
+        </button>
+
+        <p style="font-size:0.75rem;color:var(--gray-400);text-align:center;margin-top:1rem;line-height:1.6">
+          By enrolling you agree to our Terms of Service. Your subscription renews monthly. Cancel anytime.
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── PLAN DATA ───────────────────────────────────────────────────────────────
+const PLANS = {
+  starter: {
+    name: 'Micromouse Track',
+    price: '$149',
+    period: '/month',
+    amount: 14900, // cents
+    summary: '$149/mo',
+    total: '$149.00',
+    stripePrice: 'price_XXXX_starter' // replace with your Stripe Price ID
+  },
+  guided: {
+    name: 'AI + Projects Track',
+    price: '$249',
+    period: '/month',
+    amount: 24900,
+    summary: '$249/mo',
+    total: '$249.00',
+    stripePrice: 'price_XXXX_guided' // replace with your Stripe Price ID
+  },
+  elite: {
+    name: 'Full Capstone Track',
+    price: '$349',
+    period: '/month',
+    amount: 34900,
+    summary: '$349/mo',
+    total: '$349.00',
+    stripePrice: 'price_XXXX_elite' // replace with your Stripe Price ID
+  }
+};
+
+// ─── STRIPE SETUP ────────────────────────────────────────────────────────────
+// 🔑 Replace with your Stripe publishable key:
+const STRIPE_PUBLISHABLE_KEY = 'pk_live_XXXXXXXXXXXXXXXXXXXXXXXX';
+
+let stripe, elements, cardElement, paymentRequest;
+let currentPlan = 'guided';
+
+function initStripe() {
+  if (!STRIPE_PUBLISHABLE_KEY.startsWith('pk_')) return;
+  stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+  elements = stripe.elements();
+
+  // Card Element
+  cardElement = elements.create('card', {
+    style: {
+      base: {
+        fontFamily: "'Geist', system-ui, sans-serif",
+        fontSize: '15px',
+        color: '#0a0a0a',
+        '::placeholder': { color: '#a8a49c' }
+      }
+    },
+    hidePostalCode: false
+  });
+  cardElement.mount('#card-element');
+  document.getElementById('card-placeholder').style.display = 'none';
+
+  // Payment Request (Apple Pay / Google Pay)
+  paymentRequest = stripe.paymentRequest({
+    country: 'US',
+    currency: 'usd',
+    total: { label: 'RoboLab', amount: PLANS[currentPlan].amount },
+    requestPayerName: true,
+    requestPayerEmail: true
+  });
+
+  const prButton = elements.create('paymentRequestButton', {
+    paymentRequest,
+    style: { paymentRequestButton: { height: '44px', borderRadius: '8px' } }
+  });
+
+  paymentRequest.canMakePayment().then(result => {
+    if (result) {
+      document.getElementById('payment-request-placeholder').style.display = 'none';
+      prButton.mount('#payment-request-button');
+    }
+  });
+
+  paymentRequest.on('paymentmethod', async (ev) => {
+    // Handle Apple Pay / Google Pay confirmation
+    // Call your backend here to confirm the payment intent
+    ev.complete('success');
+  });
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+function openModal(planKey) {
+  currentPlan = planKey;
+  const plan = PLANS[planKey];
+  document.getElementById('modalPlanName').textContent = plan.name;
+  document.getElementById('modalPlanPrice').textContent = plan.price + ' ' + plan.period;
+  document.getElementById('summaryPlan').textContent = plan.name;
+  document.getElementById('summaryPrice').textContent = plan.summary;
+  document.getElementById('summaryTotal').textContent = plan.total;
+  if (paymentRequest) paymentRequest.update({ total: { label: 'RoboLab', amount: plan.amount } });
+  document.getElementById('checkoutModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('checkoutModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('checkoutModal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+// ─── FORM SUBMIT ─────────────────────────────────────────────────────────────
+document.getElementById('payment-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!stripe) {
+    showMessage('Please connect your Stripe account to process payments.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('submit-btn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const name = document.getElementById('customer-name').value;
+  const email = document.getElementById('customer-email').value;
+
+  // Create PaymentMethod
+  const { error, paymentMethod } = await stripe.createPaymentMethod({
+    type: 'card',
+    card: cardElement,
+    billing_details: { name, email }
+  });
+
+  if (error) {
+    showMessage(error.message, 'error');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    return;
+  }
+
+  // ⚠️ Send paymentMethod.id + plan to YOUR backend to:
+  // 1. Create a Stripe Customer
+  // 2. Create a Subscription with the chosen price ID
+  // 3. Return client_secret to confirm if needed
+  console.log('PaymentMethod created:', paymentMethod.id);
+  console.log('Plan:', PLANS[currentPlan].stripePrice);
+
+  // Simulate success for now — replace with real backend call
+  showMessage('Payment successful! Welcome to RoboLab. Check your email for next steps.', 'success');
+  btn.classList.remove('loading');
+  btn.disabled = false;
+});
+
+function showMessage(msg, type) {
+  const el = document.getElementById('payment-message');
+  el.textContent = msg;
+  el.className = 'payment-message ' + type;
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.addEventListener('load', initStripe);
+</script>
+</body>
+</html>
