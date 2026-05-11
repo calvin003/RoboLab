@@ -96,9 +96,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
 .pay-divider{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}
 .pay-divider::before,.pay-divider::after{content:'';flex:1;height:1px;background:var(--gray-200)}
 .pay-divider span{font-size:0.75rem;color:var(--gray-400);white-space:nowrap}
-.apple-pay-btn{width:100%;height:44px;background:#000;color:#fff;border:none;border-radius:8px;font-size:0.9375rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--sans);letter-spacing:-0.01em;transition:opacity 0.15s}
-.apple-pay-btn:hover{opacity:0.85}
-.apple-pay-btn svg{flex-shrink:0}
+.venmo-btn{width:100%;height:44px;background:#3D95CE;color:#fff;border:none;border-radius:8px;font-size:0.9375rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--sans);letter-spacing:-0.01em;transition:opacity 0.15s}
+.venmo-btn:hover{opacity:0.88}
+.venmo-btn svg{flex-shrink:0}
 
 /* STRIPE ELEMENTS */
 .stripe-field{border:var(--border);border-radius:8px;padding:13px 14px;transition:border-color 0.15s;background:var(--white)}
@@ -348,16 +348,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
         </div>
       </div>
 
-      <!-- APPLE PAY / PAYMENT REQUEST -->
-      <div class="modal-section-label">Express checkout</div>
+      <!-- VENMO EXPRESS CHECKOUT -->
+      <div class="modal-section-label">Pay faster</div>
       <div id="payment-request-button">
-        <!-- Stripe Payment Request Button mounts here if available -->
-        <button type="button" class="apple-pay-btn" id="apple-pay-btn" onclick="submitToStripeCheckout()">
-          <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M14.9 4.6c.2-1-.3-2.1-1-2.8C13.1 1 12 .5 10.9.7c-.2 1.1.3 2.2 1 3 .8.8 2 1.3 3 .9z" fill="white"/>
-            <path d="M15.2 6.5c-1.6-2-3.9-2-4.8-.1-.9-.1-2.1.3-3.1.3-1 0-2.1-.5-3.2-.4C1.8 6.4 0 8.5 0 12.6c0 3.9 3.3 9.4 5.2 9.4.8 0 1.6-.6 2.6-.6s1.4.6 2.6.6c2.1 0 5.7-5.3 5.7-5.3s-2.1-1.2-2.1-4.2c0-2.6 1.9-3.7 1.9-3.7s-1.5-1.8-3.2-2.3c1-.2 1.7-1.4 2.5-0z" fill="white"/>
-          </svg>
-          Pay with Apple Pay
+        <button type="button" class="venmo-btn" id="venmo-btn" onclick="submitToStripeCheckout()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M20.25 2c.69 1.148.998 2.33.998 3.82 0 4.763-4.067 10.952-7.373 15.303H6.84L4 2.956l5.876-.558 1.479 11.928C12.9 11.64 15.16 7.08 15.16 4.21c0-1.558-.266-2.614-.73-3.478L20.25 2z"/></svg>
+          Pay with Venmo
         </button>
       </div>
 
@@ -456,34 +452,6 @@ function initStripe() {
   cardElement.mount('#card-element');
   document.getElementById('card-placeholder').style.display = 'none';
 
-  // Payment Request (Apple Pay / Google Pay) — try native button first
-  paymentRequest = stripe.paymentRequest({
-    country: 'US',
-    currency: 'usd',
-    total: { label: 'RoboLab', amount: PLANS[currentPlan].amount },
-    requestPayerName: true,
-    requestPayerEmail: true
-  });
-
-  const prButton = elements.create('paymentRequestButton', {
-    paymentRequest,
-    style: { paymentRequestButton: { height: '44px', borderRadius: '8px', type: 'buy' } }
-  });
-
-  paymentRequest.canMakePayment().then(result => {
-    if (result) {
-      // Native Apple Pay / Google Pay available — use real Stripe button
-      document.getElementById('apple-pay-btn').style.display = 'none';
-      prButton.mount('#payment-request-button');
-    }
-    // Otherwise the styled Apple Pay button stays visible (redirects to Stripe Checkout)
-  });
-
-  paymentRequest.on('paymentmethod', async (ev) => {
-    // Native Apple Pay selected — redirect to Stripe Checkout
-    ev.complete('success');
-    submitToStripeCheckout();
-  });
 }
 
 // ─── MODAL ───────────────────────────────────────────────────────────────────
@@ -513,7 +481,7 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal
 
 // ─── APPLE PAY BTN → Stripe Checkout ────────────────────────────────────────
 async function submitToStripeCheckout() {
-  const appleBtn = document.getElementById('apple-pay-btn');
+  const appleBtn = document.getElementById('venmo-btn');
   if (appleBtn) { appleBtn.disabled = true; appleBtn.style.opacity = '0.6'; }
   try {
     const res = await fetch('/api/create-checkout-session', {
