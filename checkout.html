@@ -88,35 +88,23 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
 .modal-plan-name{font-family:var(--serif);font-size:1.4rem;letter-spacing:-0.02em}
 .modal-plan-price{font-size:0.875rem;color:var(--gray-600);margin-top:2px}
 .modal-body{padding:1.5rem 1.75rem}
-.modal-section-label{font-size:0.6875rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-600);margin-bottom:0.75rem}
 
-/* APPLE PAY / PAYMENT REQUEST */
-#payment-request-button{margin-bottom:1rem}
-.pay-divider{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}
-.pay-divider::before,.pay-divider::after{content:'';flex:1;height:1px;background:var(--gray-200)}
-.pay-divider span{font-size:0.75rem;color:var(--gray-400);white-space:nowrap}
-.venmo-btn{width:100%;height:44px;background:#3D95CE;color:#fff;border:none;border-radius:8px;font-size:0.9375rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--sans);letter-spacing:-0.01em;transition:opacity 0.15s}
-.venmo-btn:hover{opacity:0.88}
-.venmo-btn svg{flex-shrink:0}
-
-/* STRIPE ELEMENTS */
-.stripe-field{border:var(--border);border-radius:8px;padding:13px 14px;transition:border-color 0.15s;background:var(--white)}
-.stripe-field:focus-within{border-color:var(--black)}
-.stripe-field-label{font-size:0.75rem;color:var(--gray-600);margin-bottom:6px;display:block}
-.stripe-field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
-.form-field{margin-bottom:12px}
+/* CONTACT FORM */
+.form-section{margin-bottom:1.25rem}
+.form-section-label{font-size:0.6875rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-600);margin-bottom:0.6rem;display:block}
+.radio-group{display:flex;gap:0.5rem;flex-wrap:wrap}
+.radio-label{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:0.875rem;color:var(--gray-800);border:var(--border);border-radius:100px;padding:7px 14px;transition:all 0.15s;user-select:none}
+.radio-label input{position:absolute;opacity:0;width:0;height:0}
+.radio-label:has(input:checked){border-color:var(--black);background:var(--black);color:var(--white)}
+.radio-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid currentColor;display:inline-block;flex-shrink:0;transition:background 0.1s}
+.radio-label:has(input:checked) .radio-dot{background:var(--white);border-color:var(--white)}
+.name-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-field{margin-bottom:0}
 .form-field label{font-size:0.75rem;color:var(--gray-600);display:block;margin-bottom:6px}
-.form-field input{width:100%;border:var(--border);border-radius:8px;padding:13px 14px;font-size:0.875rem;font-family:var(--sans);color:var(--black);outline:none;transition:border-color 0.15s;background:var(--white)}
-.form-field input:focus{border-color:var(--black)}
-.form-field input::placeholder{color:var(--gray-400)}
-
-/* ORDER SUMMARY */
-.order-summary{background:var(--gray-50);border:var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem}
-.order-row{display:flex;justify-content:space-between;align-items:center;font-size:0.875rem}
-.order-row+.order-row{margin-top:8px;padding-top:8px;border-top:var(--border)}
-.order-row.total{font-weight:600}
-.order-label{color:var(--gray-600)}
-.order-value{color:var(--black)}
+.form-field input,.form-field textarea{width:100%;border:var(--border);border-radius:8px;padding:13px 14px;font-size:0.875rem;font-family:var(--sans);color:var(--black);outline:none;transition:border-color 0.15s;background:var(--white);resize:vertical}
+.form-field input:focus,.form-field textarea:focus{border-color:var(--black)}
+.form-field input::placeholder,.form-field textarea::placeholder{color:var(--gray-400)}
+.form-field textarea{min-height:90px}
 
 /* SUBMIT */
 .submit-btn{width:100%;padding:14px;background:var(--black);color:var(--white);border:none;border-radius:100px;font-size:0.9375rem;font-weight:500;font-family:var(--sans);cursor:pointer;transition:opacity 0.15s;margin-top:1.25rem;display:flex;align-items:center;justify-content:center;gap:8px}
@@ -127,10 +115,16 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
 .submit-btn.loading .btn-text{display:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ERROR / SUCCESS */
-.payment-message{font-size:0.8125rem;border-radius:8px;padding:10px 14px;margin-top:12px;display:none}
-.payment-message.error{background:#fff0f0;color:#c0392b;border:1px solid #ffc0c0;display:block}
-.payment-message.success{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;display:block}
+/* SUCCESS */
+.success-state{display:none;text-align:center;padding:2rem 1.75rem 2.5rem}
+.success-state.visible{display:block}
+.success-icon{width:52px;height:52px;border-radius:50%;background:#f0fdf4;border:1px solid #bbf7d0;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.success-state h3{font-family:var(--serif);font-size:1.5rem;letter-spacing:-0.02em;margin-bottom:0.5rem}
+.success-state p{font-size:0.875rem;color:var(--gray-600);line-height:1.7}
+
+/* ERROR */
+.form-error{font-size:0.8125rem;border-radius:8px;padding:10px 14px;margin-top:12px;background:#fff0f0;color:#c0392b;border:1px solid #ffc0c0;display:none}
+.form-error.visible{display:block}
 
 /* TRUST BAR */
 .trust-bar{border-top:var(--border);background:var(--gray-50);padding:1.5rem 2rem}
@@ -148,6 +142,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
   .pricing-grid{grid-template-columns:1fr}
   .plan-card{border-right:none;border-bottom:var(--border)}
   .modal{border-radius:12px}
+  .name-row{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -164,7 +159,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
   </div>
   <div class="nav-right">
     <a href="#">FAQ</a>
-    <button class="btn-primary" onclick="goToCheckout('guided')">Enroll now →</button>
+    <button class="btn-primary" onclick="openContactForm('guided')">Contact now →</button>
   </div>
 </nav>
 
@@ -180,11 +175,11 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
   <div class="pricing-grid">
 
     <!-- STARTER -->
-    <div class="plan-card" onclick="goToCheckout('starter')">
+    <div class="plan-card" onclick="openContactForm('starter')">
       <div class="plan-badge">Starter</div>
       <div class="plan-name">Micromouse<br>Track</div>
       <div class="plan-price">
-        <span class="plan-price-amount">$149</span>
+        <span class="plan-price-amount">$150</span>
         <span class="plan-price-period">/ month</span>
       </div>
       <p class="plan-desc">Self-paced curriculum with group live Q&amp;A sessions weekly. Perfect for self-driven learners.</p>
@@ -211,15 +206,15 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
           Capstone project support
         </li>
       </ul>
-      <button class="plan-cta">Get started →</button>
+      <button class="plan-cta">Contact now →</button>
     </div>
 
     <!-- GUIDED (FEATURED) -->
-    <div class="plan-card featured" onclick="goToCheckout('guided')">
+    <div class="plan-card featured" onclick="openContactForm('guided')">
       <div class="plan-badge">Most Popular</div>
       <div class="plan-name">AI + Projects<br>Track</div>
       <div class="plan-price">
-        <span class="plan-price-amount">$249</span>
+        <span class="plan-price-amount">$500</span>
         <span class="plan-price-period">/ month</span>
       </div>
       <p class="plan-desc">Biweekly live 1-on-1 sessions with an expert mentor. Real projects, real feedback.</p>
@@ -246,15 +241,15 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
           Priority email support
         </li>
       </ul>
-      <button class="plan-cta">Enroll now →</button>
+      <button class="plan-cta">Contact now →</button>
     </div>
 
     <!-- ELITE -->
-    <div class="plan-card" onclick="goToCheckout('elite')">
+    <div class="plan-card" onclick="openContactForm('elite')">
       <div class="plan-badge">Elite</div>
       <div class="plan-name">Full Capstone<br>Track</div>
       <div class="plan-price">
-        <span class="plan-price-amount">$349</span>
+        <span class="plan-price-amount">$2,000</span>
         <span class="plan-price-period">/ month</span>
       </div>
       <p class="plan-desc">Weekly 1-on-1 sessions and full capstone mentorship from idea to shipping to a real user.</p>
@@ -281,7 +276,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
           College portfolio prep support
         </li>
       </ul>
-      <button class="plan-cta">Get started →</button>
+      <button class="plan-cta">Contact now →</button>
     </div>
   </div>
 </div>
@@ -319,82 +314,213 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop
   </div>
 </div>
 
+<!-- CONTACT FORM MODAL -->
+<div class="modal-overlay" id="contactModal" onclick="handleOverlayClick(event)">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <div>
+        <div class="modal-plan-name" id="modal-title">Get in touch</div>
+        <div class="modal-plan-price" id="modal-subtitle">We'll reach out within 24 hours.</div>
+      </div>
+      <button class="modal-close" onclick="closeContactForm()" aria-label="Close">✕</button>
+    </div>
+
+    <!-- FORM STATE -->
+    <div class="modal-body" id="modal-form-body">
+      <form id="contactForm" onsubmit="handleFormSubmit(event)" novalidate>
+
+        <!-- I am a -->
+        <div class="form-section">
+          <span class="form-section-label">I am a</span>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="role" value="Parent" required>
+              <span class="radio-dot"></span>
+              Parent
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="role" value="Student">
+              <span class="radio-dot"></span>
+              Student
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="role" value="Counselor">
+              <span class="radio-dot"></span>
+              Counselor
+            </label>
+          </div>
+        </div>
+
+        <!-- Name -->
+        <div class="form-section">
+          <span class="form-section-label">Name</span>
+          <div class="name-row">
+            <div class="form-field">
+              <label for="firstName">First name</label>
+              <input type="text" id="firstName" name="firstName" placeholder="Alex" required autocomplete="given-name">
+            </div>
+            <div class="form-field">
+              <label for="lastName">Last name</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Chen" required autocomplete="family-name">
+            </div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-section">
+          <span class="form-section-label">Email</span>
+          <div class="form-field">
+            <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="form-section">
+          <span class="form-section-label">Phone number</span>
+          <div class="form-field">
+            <input type="tel" id="phone" name="phone" placeholder="(555) 000-0000" autocomplete="tel">
+          </div>
+        </div>
+
+        <!-- Preferred contact -->
+        <div class="form-section">
+          <span class="form-section-label">Preferred contact method</span>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="contactMethod" value="Email" required>
+              <span class="radio-dot"></span>
+              Email
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="contactMethod" value="Phone">
+              <span class="radio-dot"></span>
+              Phone
+            </label>
+          </div>
+        </div>
+
+        <!-- How can we help -->
+        <div class="form-section">
+          <span class="form-section-label">How can we help?</span>
+          <div class="form-field">
+            <textarea id="helpText" name="helpText" placeholder="Tell us a bit about your goals or any questions you have…"></textarea>
+          </div>
+        </div>
+
+        <div class="form-error" id="formError"></div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span class="btn-text">Send message →</span>
+          <span class="spinner"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div class="success-state" id="modal-success">
+      <div class="success-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#166534" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h3>Message sent!</h3>
+      <p>Thanks for reaching out. We'll be in touch within 24 hours.</p>
+    </div>
+  </div>
+</div>
 
 <script>
-// ─── PLAN DATA ───────────────────────────────────────────────────────────────
 const PLANS = {
-  starter: {
-    name: 'Micromouse Track',
-    price: '$149',
-    period: '/month',
-    amount: 14900, // cents
-    summary: '$149/mo',
-    total: '$149.00',
-    stripePrice: 'price_XXXX_starter' // replace with your Stripe Price ID
-  },
-  guided: {
-    name: 'AI + Projects Track',
-    price: '$249',
-    period: '/month',
-    amount: 24900,
-    summary: '$249/mo',
-    total: '$249.00',
-    stripePrice: 'price_XXXX_guided' // replace with your Stripe Price ID
-  },
-  elite: {
-    name: 'Full Capstone Track',
-    price: '$349',
-    period: '/month',
-    amount: 34900,
-    summary: '$349/mo',
-    total: '$349.00',
-    stripePrice: 'price_XXXX_elite' // replace with your Stripe Price ID
-  }
+  starter: { name: 'Micromouse Track', price: '$150/mo' },
+  guided:  { name: 'AI + Projects Track', price: '$500/mo' },
+  elite:   { name: 'Full Capstone Track', price: '$2,000/mo' }
 };
 
-let currentPlan = 'guided';
+function openContactForm(planKey) {
+  const plan = PLANS[planKey] || PLANS.guided;
+  document.getElementById('modal-title').textContent = plan.name;
+  document.getElementById('modal-subtitle').textContent = plan.price + ' · We\'ll reach out within 24 hours.';
+  document.getElementById('contactForm').dataset.plan = planKey;
+  // Reset form
+  document.getElementById('contactForm').reset();
+  document.getElementById('formError').classList.remove('visible');
+  document.getElementById('submitBtn').classList.remove('loading');
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('modal-form-body').style.display = '';
+  document.getElementById('modal-success').classList.remove('visible');
+  // Open modal
+  document.getElementById('contactModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
 
+function closeContactForm() {
+  document.getElementById('contactModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
 
-// ─── GO TO STRIPE CHECKOUT ───────────────────────────────────────────────────
-async function goToCheckout(planKey) {
-  currentPlan = planKey;
-  // Show loading state on the clicked button
-  const cards = document.querySelectorAll('.plan-cta');
-  cards.forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('contactModal')) closeContactForm();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeContactForm();
+});
+
+async function handleFormSubmit(e) {
+  e.preventDefault();
+  const form = e.target;
+  const errEl = document.getElementById('formError');
+  const btn = document.getElementById('submitBtn');
+  errEl.classList.remove('visible');
+
+  // Basic validation
+  const role = form.querySelector('input[name="role"]:checked');
+  const firstName = form.firstName.value.trim();
+  const lastName = form.lastName.value.trim();
+  const email = form.email.value.trim();
+  const contactMethod = form.querySelector('input[name="contactMethod"]:checked');
+
+  if (!role) { showError('Please select who you are.'); return; }
+  if (!firstName || !lastName) { showError('Please enter your full name.'); return; }
+  if (!email || !email.includes('@')) { showError('Please enter a valid email address.'); return; }
+  if (!contactMethod) { showError('Please select a preferred contact method.'); return; }
+
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const payload = {
+    plan: form.dataset.plan,
+    role: role.value,
+    firstName,
+    lastName,
+    email,
+    phone: form.phone.value.trim(),
+    contactMethod: contactMethod.value,
+    helpText: form.helpText.value.trim()
+  };
+
   try {
-    const res = await fetch('/api/create-checkout-session', {
+    const res = await fetch('https://formspree.io/f/xwpbdgpw', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan: planKey })
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
     });
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
+    if (res.ok) {
+      document.getElementById('modal-form-body').style.display = 'none';
+      document.getElementById('modal-success').classList.add('visible');
     } else {
-      cards.forEach(b => { b.disabled = false; b.style.opacity = ''; });
-      alert(data.error || 'Something went wrong. Please try again.');
+      throw new Error('Submit failed');
     }
   } catch (err) {
-    cards.forEach(b => { b.disabled = false; b.style.opacity = ''; });
-    alert('Network error. Please try again.');
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    showError('Something went wrong. Please try again or email us directly at calvins.brew@gmail.com');
   }
 }
 
-// ─── HANDLE REDIRECT BACK FROM STRIPE ────────────────────────────────────────
-(function() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('success') === 'true') {
-    const plan = params.get('plan') || 'guided';
-    document.querySelector('.hero h1').innerHTML = 'You\'re <em>enrolled!</em>';
-    document.querySelector('.hero-sub').textContent = 'Welcome to RoboLab. Check your inbox for your kit shipping info and first session details.';
-    document.querySelector('.pricing-section').style.display = 'none';
-    window.history.replaceState({}, '', '/checkout.html');
-  }
-  if (params.get('canceled') === 'true') {
-    window.history.replaceState({}, '', '/checkout.html');
-  }
-})();
-
+function showError(msg) {
+  const el = document.getElementById('formError');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
 </script>
 </body>
 </html>
