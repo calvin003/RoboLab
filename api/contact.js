@@ -15,9 +15,9 @@ export default async function handler(req, res) {
   }
 
   const PLANS = {
-    starter: 'Micromouse Track ($150/mo)',
-    guided:  'AI + Projects Track ($500/mo)',
-    elite:   'Full Capstone Track ($2,000/mo)',
+    starter: 'Micromouse Track ($300 / 5 weeks)',
+    guided:  'AI + Projects Track ($1,000 / 10 weeks)',
+    elite:   'Full Capstone Track ($3,000 / 10 weeks)',
   };
 
   const planLabel = PLANS[plan] || plan || 'Unknown';
